@@ -56,6 +56,34 @@ const createDoctor = async () => {
   }
 };
 
+const createAdmin = async () => {
+  try {
+
+    const existingAdmin = await User.findOne({
+      email: process.env.ADMIN_EMAIL
+    });
+
+    if (existingAdmin) return;
+
+    const hashedPassword = await bcrypt.hash(
+      process.env.ADMIN_PASSWORD,
+      10
+    );
+
+    await User.create({
+      name: "Admin",
+      email: process.env.ADMIN_EMAIL,
+      password: hashedPassword,
+      role: "ADMIN"
+    });
+
+    console.log("Admin created successfully");
+
+  } catch (error) {
+    console.error("Admin creation error:", error.message);
+  }
+};
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome" });
 });
@@ -106,4 +134,5 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   connectDB();
   createDoctor();
+  createAdmin();
 });

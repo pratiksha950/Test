@@ -1,45 +1,55 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+/* AUTH */
 import Signup from "./views/auth/Signup";
 import Login from "./views/auth/Login";
-import BookAppointment from "./views/patient/BookAppointment";
-import DoctorDashboard from "./views/doctor/DoctorDashboard";
-import PatientDashboard from "./views/patient/PatientDashboard";
-import ManageAppointment from "./views/doctor/ManageAppointment";
-import MyAppointment from "./views/patient/MyAppointment";
-import Contact from "./views/patient/Contact";
 
-import AddServices from "./views/doctor/AddServices";
-import AllServices from "./views/doctor/AllServices";
-import Services from "./views/patient/Services";
-import RecievdContact from "./views/doctor/RecievedContact";
-import Terms from "./views/Terms.jsx";
-import HealthTips from "./views/patient/HealthTips.jsx";
+/* DASHBOARDS */
+import PatientDashboard from "./views/patient/Dashboard";
+import DoctorDashboard from "./views/doctor/Dashboard";
+import AdminDashboard from "./views/admin/Dashboard";
+import ReceptionistDashboard from "./views/receptionist/Dashboard";
 
 const root = createRoot(document.getElementById("root"));
 
 root.render(
+
   <BrowserRouter>
+
     <Routes>
+
+      {/* AUTH */}
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/patient/book" element={<BookAppointment />} />
-      <Route path="/patient/health-tips" element={<HealthTips />} />
-      <Route path="/patient/contact" element={<Contact />} />
-      <Route path="/doctor/contact" element={<RecievdContact />} />
-      <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-      <Route path="/service/new" element={<AddServices />} />
-      <Route path="/service/allservice" element={<AllServices />} />
-      <Route path="/service/viewservices" element={<Services />} />
-      
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/" element={<PatientDashboard />} />
+
+      {/* PATIENT */}
       <Route
-        path="/doctor/manage-appointments"
-        element={<ManageAppointment />}
+        path="/"
+        element={<PatientDashboard />}
       />
-      <Route path="/patient/my-appointments" element={<MyAppointment />} />
+
+      {/* DOCTOR */}
+      <Route
+        path="/doctor/dashboard"
+        element={<DoctorDashboard />}
+      />
+
+      {/* ADMIN */}
+      <Route
+        path="/admin/dashboard"
+        element={<AdminDashboard />}
+      />
+
+      {/* RECEPTIONIST */}
+      <Route
+        path="/receptionist/dashboard"
+        element={<ReceptionistDashboard />}
+      />
+
     </Routes>
-  </BrowserRouter>,
+
+  </BrowserRouter>
+
 );

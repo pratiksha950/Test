@@ -14,11 +14,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  role: {
-    type: String,
-    enum: ["DOCTOR", "PATIENT"],
-    default: "PATIENT"
-  }
+ role: {
+  type: String,
+  enum: ["ADMIN", "DOCTOR", "RECEPTIONIST", "PATIENT"],
+  default: "PATIENT"
+}
 }, { timestamps: true });
 
 export default mongoose.model("User", userSchema);
