@@ -7,6 +7,8 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import backicon from "./../../assets/back.png"
 import { Link } from "react-router";
+import NavbarPatient from "../../components/NavbarPatient.jsx";
+import Footer from "../../components/Footer.jsx";
 
 function Login() {
   const [form, setForm] = useState({
@@ -59,6 +61,7 @@ function Login() {
 
   return (
     <div className="bg-gradient-to-r from-slate-100 to-teal-50  min-h-screen   ">
+    <NavbarPatient />
       <div className="min-h-[640px] flex items-center justify-center ">
 
       <Link to="/">
@@ -110,6 +113,7 @@ function Login() {
         </p>
       </div>
       </div>
+      <Footer />
       <Toaster />
     </div>
   );
