@@ -1,6 +1,12 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
 
 /* AUTH */
 import Signup from "./views/auth/Signup";
@@ -11,7 +17,29 @@ import PatientDashboard from "./views/patient/Dashboard";
 import DoctorDashboard from "./views/doctor/Dashboard";
 import AdminDashboard from "./views/admin/Dashboard";
 import ReceptionistDashboard from "./views/receptionist/Dashboard";
+
+/* OTHER */
 import Home from "./views/Home.jsx";
+import HealthTips from "./views/HealthTips.jsx";
+
+
+/* ✅ PROTECTED ROUTE */
+function ProtectedRoute({ children, allowedRole }) {
+
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  if (allowedRole && role !== allowedRole) {
+    return <Navigate to="/" />;
+  }
+
+  /* ✅ Allowed */
+  return children;
+}
 
 const root = createRoot(document.getElementById("root"));
 
@@ -20,34 +48,74 @@ root.render(
   <BrowserRouter>
 
     <Routes>
-      <Route path="/" element={<Home />} />
 
-      {/* AUTH */}
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
-
-      {/* PATIENT */}
+      {/* HOME */}
       <Route
         path="/"
-        element={<PatientDashboard />}
+        element={<Home />}
       />
 
-      {/* DOCTOR */}
-      {/* <Route
-        path="/doctor/dashboard"
-        element={<DoctorDashboard />}
-      /> */}
+      {/* HEALTH TIPS */}
+      <Route
+        path="/patient/health-tips"
+        element={<HealthTips />}
+      />
 
-      {/* ADMIN */}
+      {/* AUTH */}
+      <Route
+        path="/signup"
+        element={<Signup />}
+      />
+
+      <Route
+        path="/login"
+        element={<Login />}
+      />
+
+      {/* ================= PATIENT ================= */}
+      <Route
+        path="/patient/dashboard"
+        element={
+          <ProtectedRoute allowedRole="PATIENT">
+            <PatientDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= DOCTOR ================= */}
+      <Route
+        path="/doctor/dashboard"
+        element={
+          <ProtectedRoute allowedRole="DOCTOR">
+            <DoctorDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= ADMIN ================= */}
       <Route
         path="/admin/dashboard"
-        element={<AdminDashboard />}
+        element={
+          <ProtectedRoute allowedRole="ADMIN">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
       />
 
-      {/* RECEPTIONIST */}
+      {/* ================= RECEPTIONIST ================= */}
       <Route
         path="/receptionist/dashboard"
-        element={<ReceptionistDashboard />}
+        element={
+          <ProtectedRoute allowedRole="RECEPTIONIST">
+            <ReceptionistDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 404 */}
+      <Route
+        path="*"
+        element={<h1>404 Page Not Found</h1>}
       />
 
     </Routes>

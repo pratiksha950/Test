@@ -114,9 +114,9 @@ function Signup() {
             className="w-full border border-gray-300 p-2 rounded-md mt-3"
           >
             <option value="PATIENT">Patient</option>
-            <option value="DOCTOR">Doctor</option>
+           
             <option value="RECEPTIONIST">Receptionist</option>
-            <option value="ADMIN">Admin</option>
+            
           </select>
 
           <Button
