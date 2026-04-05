@@ -11,6 +11,7 @@ import PatientDashboard from "./views/patient/Dashboard";
 import DoctorDashboard from "./views/doctor/Dashboard";
 import AdminDashboard from "./views/admin/Dashboard";
 import ReceptionistDashboard from "./views/receptionist/Dashboard";
+import Home from "./views/Home.jsx";
 
 const root = createRoot(document.getElementById("root"));
 
@@ -19,6 +20,7 @@ root.render(
   <BrowserRouter>
 
     <Routes>
+      <Route path="/" element={<Home />} />
 
       {/* AUTH */}
       <Route path="/signup" element={<Signup />} />
@@ -31,10 +33,10 @@ root.render(
       />
 
       {/* DOCTOR */}
-      <Route
+      {/* <Route
         path="/doctor/dashboard"
         element={<DoctorDashboard />}
-      />
+      /> */}
 
       {/* ADMIN */}
       <Route
