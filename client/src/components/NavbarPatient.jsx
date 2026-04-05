@@ -5,6 +5,7 @@ import Logo from "../assets/logo.png";
 import Button from "./Button";
 import { isUserLoggedIn, logoutUser } from "../utils";
 import Avatar from "./Avatar";
+import Bed from "../views/Bed";
 
 const NavbarPatient = () => {
   const location = useLocation();
@@ -19,7 +20,7 @@ const NavbarPatient = () => {
     { name: "HealthTips", path: "/patient/health-tips" },
     { name: "Services", path: "/service/viewservices" },
     { name: "Appointments", path: "/patient/book" },
-    { name: "Contact", path: "/patient/contact" },
+    { name: "Book a Bed", path: "/bed" },
   ];
 
   return (

@@ -3,10 +3,13 @@ import dotenv from "dotenv";
 import express from "express";
 import connectDB from "./db.js";
 import User from "./models/User.js";
+import BedBooking from "./models/BedBooking.js"; // ✅ IMPORTANT
+
 import ImageKit from "@imagekit/nodejs";
 import bcrypt from "bcryptjs";
 
 import { registerPatient, loginUser } from "./controllers/authController.js";
+
 import {
   postAppointment,
   getPatientAppointments,
@@ -39,7 +42,6 @@ const client = new ImageKit({
 
 const createDoctor = async () => {
   try {
-    // ✅ FIX: only email check (NO name)
     const existingDoctor = await User.findOne({
       email: process.env.DOCTOR_EMAIL
     });
@@ -61,9 +63,9 @@ const createDoctor = async () => {
       role: "DOCTOR"
     });
 
-    console.log("Doctor created successfully ✅");
+    console.log("Doctor created ✅");
   } catch (error) {
-    console.error("Doctor creation error:", error.message);
+    console.error("Doctor error:", error.message);
   }
 };
 
@@ -92,40 +94,115 @@ const createAdmin = async () => {
       role: "ADMIN"
     });
 
-    console.log("Admin created successfully ✅");
+    console.log("Admin created ✅");
   } catch (error) {
-    console.error("Admin creation error:", error.message);
+    console.error("Admin error:", error.message);
   }
 };
 
 /* ================= ROUTES ================= */
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome" });
+  res.json({ message: "Server Running 🚀" });
 });
 
-app.get("/health", (req, res) => {
-  res.json({ status: "OK" });
-});
+/* ================= AUTH ================= */
 
-/* AUTH */
 app.post("/api/auth/register", registerPatient);
 app.post("/api/auth/login", loginUser);
 
-/* IMAGEKIT AUTH */
-app.get("/auth", (req, res) => {
-  const { token, expire, signature } =
-    client.helper.getAuthenticationParameters();
+/* ================= BED BOOKING ================= */
 
-  res.send({
-    token,
-    expire,
-    signature,
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY
-  });
-});
+/* 🧑‍🦱 Patient - Book Bed */
+app.post(
+  "/api/bed/book",
+  authenticateJWT,
+  authorizeRole("PATIENT"),
+  async (req, res) => {
+    try {
+      const { bedName, price, startDate, endDate } = req.body;
 
-/* APPOINTMENTS */
+      const booking = await BedBooking.create({
+        patientName: req.user.name,
+        patientId: req.user.id,
+        bedName,
+        price,
+        startDate,
+        endDate
+      });
+
+      res.status(201).json({
+        message: "Bed booked successfully",
+        booking
+      });
+
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+/* 🧑‍💻 Receptionist/Admin - Get All Bookings */
+app.get(
+  "/api/bed/all",
+  authenticateJWT,
+  authorizeRole("RECEPTIONIST", "ADMIN"),
+  async (req, res) => {
+    try {
+      const bookings = await BedBooking.find().sort({ createdAt: -1 });
+      res.json(bookings);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+/* 🧑‍🦱 Patient - My Bookings */
+app.get(
+  "/api/bed/my",
+  authenticateJWT,
+  authorizeRole("PATIENT"),
+  async (req, res) => {
+    try {
+      const bookings = await BedBooking.find({
+        patientId: req.user.id
+      });
+
+      res.json(bookings);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+/* 🔄 Update Booking Status */
+app.put(
+  "/api/bed/status/:id",
+  authenticateJWT,
+  authorizeRole("RECEPTIONIST", "ADMIN"),
+  async (req, res) => {
+    try {
+      const { status } = req.body;
+
+      const booking = await BedBooking.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true }
+      );
+
+      res.json({
+        message: "Status updated",
+        booking
+      });
+
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+/* ================= APPOINTMENTS ================= */
+
 app.post(
   "/api/appointment/book",
   authenticateJWT,
@@ -161,7 +238,8 @@ app.get(
   getPatientAppointments
 );
 
-/* SERVICES */
+/* ================= SERVICES ================= */
+
 app.post(
   "/api/services",
   authenticateJWT,
@@ -171,7 +249,8 @@ app.post(
 
 app.get("/api/services", getService);
 
-/* CONTACT */
+/* ================= CONTACT ================= */
+
 app.post(
   "/api/contact",
   authenticateJWT,
@@ -187,8 +266,6 @@ app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT} 🚀`);
 
   await connectDB();
-
-  // ✅ Ensure these run after DB connect
   await createDoctor();
   await createAdmin();
 });

@@ -21,6 +21,7 @@ import ReceptionistDashboard from "./views/receptionist/Dashboard";
 /* OTHER */
 import Home from "./views/Home.jsx";
 import HealthTips from "./views/HealthTips.jsx";
+import Bed from "./views/Bed.jsx";
 
 
 /* ✅ PROTECTED ROUTE */
@@ -70,6 +71,11 @@ root.render(
       <Route
         path="/login"
         element={<Login />}
+      />
+
+      <Route
+        path="/bed"
+        element={<Bed />}
       />
 
       {/* ================= PATIENT ================= */}
