@@ -1,13 +1,18 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import NavbarPatient from "../components/NavbarPatient.jsx";
 import Footer from "../components/Footer.jsx";
 import Calendar from "../components/Calendar.jsx";
 
 function Bed() {
+  const navigate = useNavigate();
 
   const [selectedBed, setSelectedBed] = useState(null);
   const [showCalendar, setShowCalendar] = useState(null);
   const [dates, setDates] = useState({});
+  const [message, setMessage] = useState("");
 
   const beds = [
     {
@@ -33,6 +38,7 @@ function Bed() {
     }
   ];
 
+  // ================= DATE SELECT =================
   const handleRange = (bedId, start, end) => {
     setDates({
       ...dates,
@@ -41,41 +47,73 @@ function Bed() {
     setShowCalendar(null);
   };
 
-  const handleBooking = (bed) => {
+  // ================= BOOK BED =================
+  const handleBooking = async (bed) => {
+    setSelectedBed(null); // ✅ reset at start
 
-  if (!dates[bed.id]) {
-    alert("Please select dates first!");
-    return;
-  }
+    const token = localStorage.getItem("token");
 
-  const bookingData = {
-    patientName: localStorage.getItem("name") || "Patient",
-    bedName: bed.name,
-    price: bed.price,
-    startDate: dates[bed.id].start,
-    endDate: dates[bed.id].end,
-    status: "Booked"
+    // ✅ LOGIN CHECK
+    if (!token) {
+      setMessage("⚠️ Please login first!");
+      setTimeout(() => setMessage(""), 3000);
+      navigate("/login");
+      return; // ❗ stop execution
+    }
+
+    // ✅ DATE CHECK
+    if (!dates[bed.id]) {
+      setMessage("⚠️ Please select dates first!");
+      setTimeout(() => setMessage(""), 3000);
+      return; // ❗ stop execution
+    }
+
+    try {
+      const payload = {
+        bedName: bed.name,
+        price: bed.price,
+        startDate: new Date(dates[bed.id].start).toISOString(),
+        endDate: new Date(dates[bed.id].end).toISOString()
+      };
+
+      const res = await axios.post(
+        "http://localhost:8080/api/bed/book",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // ✅ ONLY AFTER SUCCESS
+      setMessage("✅ Booking Successful!");
+      setSelectedBed(bed.name);
+
+      setTimeout(() => setMessage(""), 3000);
+
+    } catch (error) {
+      console.error("Booking error:", error.response?.data || error);
+      setMessage("❌ Booking failed!");
+      setTimeout(() => setMessage(""), 3000);
+    }
   };
-
-  // ✅ Get old bookings
-  let allBookings = JSON.parse(localStorage.getItem("allBookings")) || [];
-
-  // ✅ Add new booking
-  allBookings.push(bookingData);
-
-  // ✅ Save again
-  localStorage.setItem("allBookings", JSON.stringify(allBookings));
-
-  alert("Bed Booked Successfully ✅");
-
-  setSelectedBed(bed.name);
-};
 
   return (
     <div className="bg-gray-100 min-h-screen">
       <NavbarPatient />
 
-      {/* Header */}
+      {/* TOP MESSAGE */}
+      {message && (
+        <div className={`mx-6 mt-4 p-4 rounded-lg text-white shadow 
+          ${message.includes("❌") ? "bg-red-500" : 
+            message.includes("⚠️") ? "bg-yellow-500" : 
+            "bg-green-600"}`}>
+          {message}
+        </div>
+      )}
+
+      {/* HEADER */}
       <div className="p-6">
         <div className="bg-white p-6 rounded-2xl shadow-md border border-green-200">
           <h1 className="text-3xl font-bold text-green-700">
@@ -87,15 +125,13 @@ function Bed() {
         </div>
       </div>
 
-      {/* Cards */}
+      {/* BED CARDS */}
       <div className="px-6 pb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
         {beds.map((bed) => (
           <div
             key={bed.id}
             className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300"
           >
-
             <img
               src={bed.img}
               alt={bed.name}
@@ -103,27 +139,24 @@ function Bed() {
             />
 
             <div className="p-4">
-
               <h3 className="text-xl font-bold">{bed.name}</h3>
               <p className="text-gray-500 text-sm">{bed.desc}</p>
-
               <p className="text-green-600 font-semibold mt-2 text-lg">
                 ₹{bed.price} / night
               </p>
 
-              {/* Date Range Button */}
+              {/* DATE SELECT */}
               <div className="mt-4 relative">
-
                 <button
                   onClick={() => setShowCalendar(bed.id)}
                   className="w-full border p-2 rounded-lg text-left"
                 >
                   {dates[bed.id]
-                    ? `${dates[bed.id].start.toDateString()} → ${dates[bed.id].end.toDateString()}`
+                    ? `${new Date(dates[bed.id].start).toDateString()} → ${new Date(dates[bed.id].end).toDateString()}`
                     : "Select Dates"}
                 </button>
 
-                {/* Calendar */}
+                {/* CALENDAR */}
                 {showCalendar === bed.id && (
                   <div className="absolute z-50 mt-2 left-0">
                     <Calendar
@@ -133,24 +166,21 @@ function Bed() {
                     />
                   </div>
                 )}
-
               </div>
 
-              {/* Button */}
+              {/* BOOK BUTTON */}
               <button
-                onClick={() => setSelectedBed(bed.name)}
+                onClick={() => handleBooking(bed)}
                 className="w-full mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
               >
                 Book Now
               </button>
-
             </div>
           </div>
         ))}
-
       </div>
 
-      {/* Selected */}
+      {/* SELECTED BED POPUP */}
       {selectedBed && (
         <div className="fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg">
           Selected: {selectedBed}

@@ -17,6 +17,8 @@ import PatientDashboard from "./views/patient/Dashboard";
 import DoctorDashboard from "./views/doctor/Dashboard";
 import AdminDashboard from "./views/admin/Dashboard";
 import ReceptionistDashboard from "./views/receptionist/Dashboard";
+import BookAppointment from "./views/BookAppointment.jsx";
+import MyAppointment from "./views/MyAppointment.jsx";
 
 /* OTHER */
 import Home from "./views/Home.jsx";
@@ -76,6 +78,17 @@ root.render(
       <Route
         path="/bed"
         element={<Bed />}
+      />
+
+      <Route
+        path="/BookAppointment"
+       element={<BookAppointment />}
+      />
+
+
+      <Route
+        path="/MyAppointment"
+        element={<MyAppointment />}
       />
 
       {/* ================= PATIENT ================= */}

@@ -19,7 +19,7 @@ const NavbarPatient = () => {
     { name: "Home", path: "/" },
     { name: "HealthTips", path: "/patient/health-tips" },
     { name: "Services", path: "/service/viewservices" },
-    { name: "Appointments", path: "/patient/book" },
+    { name: "Appointments", path: "/BookAppointment" },
     { name: "Book a Bed", path: "/bed" },
   ];
 

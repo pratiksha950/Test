@@ -55,7 +55,7 @@ function PatientDashboard() {
             </p>
 
             <button
-              onClick={() => navigate("/book-appointment")}
+              onClick={() => navigate("/BookAppointment")}
               className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
             >
               Book Now
@@ -73,7 +73,7 @@ function PatientDashboard() {
             </p>
 
             <button
-              onClick={() => navigate("/my-appointments")}
+              onClick={() => navigate("/MyAppointment")}
               className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
               View Appointments
