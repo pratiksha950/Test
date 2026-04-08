@@ -19,12 +19,14 @@ import AdminDashboard from "./views/admin/Dashboard";
 import ReceptionistDashboard from "./views/receptionist/Dashboard";
 import BookAppointment from "./views/BookAppointment.jsx";
 import MyAppointment from "./views/MyAppointment.jsx";
+import ManageAppointment from "./views/ManageAppointment";
+
 
 /* OTHER */
 import Home from "./views/Home.jsx";
 import HealthTips from "./views/HealthTips.jsx";
 import Bed from "./views/Bed.jsx";
-
+import Services from "./views/Services.jsx";
 
 /* ✅ PROTECTED ROUTE */
 function ProtectedRoute({ children, allowedRole }) {
@@ -81,16 +83,27 @@ root.render(
       />
 
       <Route
-        path="/BookAppointment"
-       element={<BookAppointment />}
+        path="/service/viewservices"
+        element={<Services />}
       />
-
 
       <Route
-        path="/MyAppointment"
-        element={<MyAppointment />}
+        path="/BookAppointment"
+        element={
+          <ProtectedRoute allowedRole="PATIENT">
+            <BookAppointment />
+          </ProtectedRoute>
+        }
       />
 
+<Route
+  path="/MyAppointment"
+  element={
+    <ProtectedRoute allowedRole="PATIENT">
+      <MyAppointment />
+    </ProtectedRoute>
+  }
+/>
       {/* ================= PATIENT ================= */}
       <Route
         path="/patient/dashboard"
@@ -135,6 +148,11 @@ root.render(
       <Route
         path="*"
         element={<h1>404 Page Not Found</h1>}
+      />
+
+       <Route
+        path="/manage-appointments"
+        element={<ManageAppointment />}
       />
 
     </Routes>

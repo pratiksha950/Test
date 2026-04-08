@@ -8,7 +8,8 @@ import { setPageTitle } from "../utils";
 import Footer from "../components/Footer";
 import Appointment from "../assets/appointment.png";
 import MyAppointments from "../assets/myappointment.png";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
+import { Clock3, ShieldCheck, HeartPulse, CalendarDays } from "lucide-react";
 
 function BookAppointment() {
   const [form, setForm] = useState({
@@ -16,11 +17,11 @@ function BookAppointment() {
     email: "",
     phone: "",
     problem: "",
-    address: "",  
+    address: "",
   });
 
   useEffect(() => {
-    setPageTitle("Add Appointment");
+    setPageTitle("Book Appointment");
   }, []);
 
   const handleChange = (e) => {
@@ -30,16 +31,14 @@ function BookAppointment() {
   const addAppointment = async () => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/MyAppointment`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/BookAppointment`,
         form,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        },
+        }
       );
-
-      console.log(res.data);
 
       if (res.data.success) {
         toast.success(res.data.message);
@@ -56,86 +55,156 @@ function BookAppointment() {
       }
     } catch (error) {
       console.error(error);
-      toast.error("You have to login first");
+      toast.error("Please login to book an appointment.");
     }
   };
 
   return (
-    <div className="bg-gradient-to-r from-slate-100 to-teal-50  min-h-screen    ">
+    <div className="bg-gradient-to-br from-slate-100 via-emerald-50 to-slate-200 min-h-screen text-slate-900">
       <NavbarPatient />
 
-      <Link to="/MyAppointment">
-        <img
-          src={MyAppointments}
-          alt="MyAppointments"
-          className="fixed top-30 right-10 h-10 cursor-pointer"
-        />
-      </Link>
+      <div className="relative pt-28 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 rounded-[2rem] border border-slate-200 bg-white/80 p-8 shadow-2xl shadow-slate-300/20 backdrop-blur-xl transition-all">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-3xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-600">Appointment Booking</p>
+                <h1 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                  Book Your Medical Appointment Quickly
+                </h1>
+                <p className="mt-4 text-slate-600 leading-8">
+                  Fill out the form below to schedule your visit with our expert medical team and receive fast, compassionate care.
+                </p>
+              </div>
 
-      <div className="min-h-[640px] flex items-center justify-center    ">
-        <div className="w-full max-w-2xl   mx-auto p-6  min-h-[400px] shadow-xl   rounded-xl bg-white border border-green-300 flex flex-col items-center justify-center   ">
-          <p className="text-xl md:text-2xl  text-center mb-4  font-semibold flex flex-row   ">
-            <img
-              src={Appointment}
-              alt="Add New Appointment"
-              className=" h-9 mr-1"
-            />
-            Book Your <span className="text-green-700 ml-2"> Appointment</span>
-          </p>
+              <Link
+                to="/MyAppointment"
+                className="inline-flex items-center justify-center gap-3 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800"
+              >
+                <img src={MyAppointments} alt="My Appointments" className="h-5 w-5" />
+                My Appointments
+              </Link>
+            </div>
+          </div>
 
-          <Input
-            type="text"
-            placeholder="Enter Patient Name"
-            name="patientName"
-            value={form.patientName}
-            onChange={handleChange}
-          />
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-300/20">
+              <div className="flex items-center gap-4 rounded-3xl bg-sky-100/80 p-5">
+                <img src={Appointment} alt="Appointment icon" className="h-12 w-12 rounded-2xl bg-white p-2" />
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">Why choose us</p>
+                  <h2 className="mt-2 text-2xl font-bold text-slate-900">Comfortable care from start to finish</h2>
+                </div>
+              </div>
 
-          <Input
-            type="email"
-            placeholder="Enter Your Email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-          />
+              <div className="mt-8 grid gap-4">
+                <div className="flex gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-100 text-sky-700">
+                    <Clock3 className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">Easy Scheduling</p>
+                    <p className="text-sm text-slate-600">Choose your preferred date and time in just a few clicks.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-700">
+                    <ShieldCheck className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">Trusted Doctors</p>
+                    <p className="text-sm text-slate-600">Work with our certified medical specialists across key disciplines.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-rose-100 text-rose-700">
+                    <HeartPulse className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">Advanced Care</p>
+                    <p className="text-sm text-slate-600">Benefit from modern equipment and a compassionate treatment experience.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-3xl bg-sky-100 text-sky-700">
+                    <CalendarDays className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900">Quick Confirmations</p>
+                    <p className="text-sm text-slate-600">Receive appointment updates and reminders instantly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <Input
-            type="tel"
-            placeholder="Enter Your Phone Number"
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-          />
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-300/20">
+              <div className="mb-8 rounded-3xl bg-slate-100 p-6 text-slate-900">
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-600">Patient Details</p>
+                <h2 className="mt-3 text-2xl font-bold">Let us know how we can help.</h2>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Complete the form and our team will contact you to confirm your appointment.
+                </p>
+              </div>
 
-          <Input
-            type="textarea"
-            placeholder="Describe your problem"
-            name="problem"
-            value={form.problem}
-            onChange={handleChange}
-          />
+              <div className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="Patient Name"
+                  name="patientName"
+                  value={form.patientName}
+                  onChange={handleChange}
+                />
 
-          <Input
-            type="text"
-            placeholder="Enter Your Address"
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-          />
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                />
 
-          <div className="text-center mt-4">
-            <Button
-              title="Book Appointment"
-              size="medium"
-              variant="primary"
-              onClick={addAppointment}
-            />
+                <Input
+                  type="tel"
+                  placeholder="Phone Number"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                />
+
+                <Input
+                  type="textarea"
+                  placeholder="Describe your symptoms or reason for visit"
+                  name="problem"
+                  value={form.problem}
+                  onChange={handleChange}
+                />
+
+                <Input
+                  type="text"
+                  placeholder="Address"
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm text-slate-500">Need help? Our support team is ready to assist.</p>
+                </div>
+                <Button
+                  title="Book Appointment"
+                  size="medium"
+                  variant="primary"
+                  onClick={addAppointment}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <Toaster />
-
+      <Toaster position="top-right" />
       <Footer />
     </div>
   );

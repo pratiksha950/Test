@@ -1,4 +1,4 @@
-import Appointment from "../models/Appointments.js";
+import Appointment from "../models/Appointment.js";
 import User from "../models/User.js";
 
 import dotenv from "dotenv"; 
