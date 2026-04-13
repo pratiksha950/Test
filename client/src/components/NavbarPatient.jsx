@@ -28,16 +28,16 @@ const NavbarPatient = () => {
       <div className="fixed top-0 left-0 z-50 h-1 bg-green-500 w-full"></div>
       <nav className="fixed top-1 left-0 w-full z-40 bg-gray-100 px-6 md:px-12 py-4 flex items-center justify-between shadow-sm">
         <Link to="/" className="flex items-center gap-3 cursor-pointer">
-          <img src={Logo} alt="logo" className="w-14" />
+          <img src={Logo} alt="logo" className="w-10 " />
           <div>
-            <h1 className="text-2xl font-bold text-green-600">
+            <h1 className="text-2xl font-bold text-green-600 mr-4">
               <span className="text-black">Health</span>Matrix+
             </h1>
             <p className="text-sm text-gray-600">Healthcare Solutions</p>
           </div>
         </Link>
 
-        <div className="hidden lg:flex items-center bg-white border border-green-400 rounded-full px-8 py-3 shadow-md space-x-10">
+        <div className="hidden lg:flex items-center bg-white border border-green-400 rounded-full px-8 py-1 shadow-md space-x-10">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
 

@@ -18,7 +18,8 @@ const bedBookingSchema = new mongoose.Schema({
   endDate: Date,
   status: {
     type: String,
-    default: "Booked" // Booked | Admitted | Discharged
+    enum: ["Pending", "Accepted", "Rejected"],
+    default: "Pending"
   }
 }, { timestamps: true });
 

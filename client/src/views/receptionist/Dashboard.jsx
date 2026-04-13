@@ -42,10 +42,31 @@ function ReceptionistDashboard() {
   /* ================= STATUS COLOR ================= */
 
   const getStatusColor = (status) => {
-    if (status === "Booked") return "text-blue-600";
-    if (status === "Admitted") return "text-green-600";
-    if (status === "Discharged") return "text-red-600";
-    return "text-gray-500";
+    if (status === "Pending") return "text-yellow-600 bg-yellow-100";
+    if (status === "Accepted") return "text-green-600 bg-green-100";
+    if (status === "Rejected") return "text-red-600 bg-red-100";
+    return "text-gray-500 bg-gray-100";
+  };
+
+  /* ================= UPDATE STATUS ================= */
+
+  const updateStatus = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.put(`http://localhost:8080/api/bed/${id}/status`, {
+        status: newStatus
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      fetchBookings(); // refresh
+
+    } catch (error) {
+      console.log("Error updating status:", error);
+    }
   };
 
   return (
